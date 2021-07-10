@@ -1,3 +1,8 @@
+###################################
+# Módulo responsável pela comunicação direta com a API
+# https://developers.themoviedb.org/
+###################################
+
 import src.util.setting as setting
 import requests
 
@@ -43,6 +48,29 @@ def get_trending_request():
             i += 1
 
     return list
+
+def get_details_request(id_movie):
+    conf = setting.read_config()
+    idioma = conf['language']
+    tokenAPI = conf['token']
+    response = requests.get(f'{urlAPI}/movie/{id_movie}?api_key={tokenAPI}&language={idioma}')
+    if response.status_code != 200:
+        print('Não encontrado')
+        return {}
+    else:
+        dados_movie = response.json()
+        genres = []
+        for value in dados_movie['genres']:
+            genres.append(value['name'])
+        objMovie = {
+            'original_title': dados_movie['original_title'],
+            'title': dados_movie['title'],
+            'genges': genres,
+            'homepage': dados_movie['homepage'],
+            'vote_average': dados_movie['vote_average'],
+            'release_date': dados_movie['release_date']
+        }
+        return objMovie
 
 
 
